@@ -1,3 +1,13 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "soul-ai": {
+      "root": ".",
+      "framework": "express",
+      "entrypoint": "server.js"
+    }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": { "service": "soul-ai" } }
+  ]
 }
