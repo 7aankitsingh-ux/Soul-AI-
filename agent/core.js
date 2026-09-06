@@ -7,7 +7,7 @@ const { tools, executeTool, getToolDefinitions } = require('./tools');
 const { buildSystemPrompt } = require('./prompts');
 
 const QWEN_TEACHER_JSONL = path.join(__dirname, '..', 'soul-llm', 'data', 'qwen_teacher.jsonl');
-const SOUL_LLM_API = 'http://localhost:8000';
+const SOUL_LLM_API = process.env.SOUL_LLM_API || 'http://localhost:8000';
 
 class LocalAgentEngine {
   constructor(options = {}) {
@@ -125,7 +125,7 @@ class LocalAgentEngine {
 
     // Check SOUL-LLM on port 8000 (always listed; used only as fallback)
     try {
-      const soulRes = await this.makeRequest('http://localhost:8000/health', { method: 'GET' }, 3000);
+      const soulRes = await this.makeRequest(SOUL_LLM_API + '/health', { method: 'GET' }, 3000);
       const soulData = JSON.parse(soulRes);
       if (soulData.status === 'healthy') {
         soulLlmOnline = true;
@@ -173,7 +173,7 @@ class LocalAgentEngine {
     } catch (err) {
       if (soulLlmOnline) {
         this.provider = 'soul-llm';
-        this.endpoint = 'http://localhost:8000';
+        this.endpoint = SOUL_LLM_API;
         this.model = 'SOUL-LLM (Scratch PyTorch)';
         return {
           online: true,
@@ -539,7 +539,7 @@ class LocalAgentEngine {
         };
 
         let fullText = '';
-        this.streamPost('http://localhost:8000/v1/chat/completions', payload, (line) => {
+        this.streamPost(SOUL_LLM_API + '/v1/chat/completions', payload, (line) => {
           if (line.startsWith('data: ')) {
             const dataStr = line.replace(/^data: /, '').trim();
             if (dataStr === '[DONE]') return;

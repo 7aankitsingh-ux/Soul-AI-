@@ -168,7 +168,26 @@ def load_model():
         return
 
     TOKENIZER = SimpleTokenizer()
-    TOKENIZER.load(VOCAB_PATH)
+    try:
+        TOKENIZER.load(VOCAB_PATH)
+    except FileNotFoundError:
+        # Fresh environment (e.g. a cloud deploy) has no built vocab yet.
+        # Fit a character vocab from the available corpus (or a minimal one)
+        # so the API can start, then persist it for the trainer.
+        corpus = ""
+        for cand in (os.path.join(BASE_DIR, "data", "base.txt"),
+                     os.path.join(BASE_DIR, "data", "corpus.txt")):
+            if os.path.exists(cand):
+                with open(cand, encoding="utf-8") as f:
+                    corpus = f.read()
+                break
+        if not corpus.strip():
+            corpus = ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                      "0123456789 \n.,!?:;'\"()[]{}<>+-*/=@#$%&_~")
+        TOKENIZER.fit(corpus)
+        os.makedirs(os.path.dirname(VOCAB_PATH), exist_ok=True)
+        TOKENIZER.save(VOCAB_PATH)
+        print("[SOUL-LLM] Bootstrapped vocab.json for fresh environment")
 
     MODEL = SoulTransformer(
         vocab_size=TOKENIZER.get_vocab_size(),
