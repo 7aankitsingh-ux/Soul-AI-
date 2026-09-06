@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soul AI — Offline Personal Intelligence</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Animated galaxy background (black & white) -->
+  <div class="galaxy-bg" aria-hidden="true">
+    <div class="galaxy-nebula"></div>
+    <div class="galaxy-stars stars-far"></div>
+    <div class="galaxy-stars stars-mid"></div>
+    <div class="galaxy-stars stars-near"></div>
+  </div>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <img id="brand-icon" class="brand-icon" src="favicon.svg" alt="Soul AI">
+        <div class="brand-name">Soul AI</div>
+        <span class="brand-badge" id="offline-badge">Offline</span>
+      </div>
+
+      <!-- New Chat -->
+      <button class="btn-new-chat" id="new-chat-btn">
+        <span style="font-size:16px;">+</span> New Chat
+      </button>
+
+      <!-- Saved Chats -->
+      <div class="chats-section">
+        <div class="chats-header">Previous Chats</div>
+        <div class="chats-search">
+          <input type="text" id="chat-search-input" placeholder="Search previous chats..." autocomplete="off">
+        </div>
+        <div class="chats-list" id="chats-list">
+          <div class="chats-empty" id="chats-empty">No saved chats yet.</div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-menu">
+        <div class="nav-item active" data-tab="chat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          Chat
+        </div>
+        <div class="nav-item" data-tab="rag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          Knowledge Base
+        </div>
+        <div class="nav-item" data-tab="workspace">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+          Workspace Files
+        </div>
+        <div class="nav-item" data-tab="tools">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          Tools
+        </div>
+        <div class="nav-item" data-tab="settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          Settings
+        </div>
+      </nav>
+
+      <!-- Clean Footer Status -->
+      <div class="sidebar-footer">
+        <div class="status-row">
+          <span class="status-dot online" id="status-dot"></span>
+          <span id="status-text">Soul AI Ready</span>
+        </div>
+        <div class="footer-model" id="footer-model">qwen2.5:7b • RTX 4060</div>
+        <div class="user-row" id="user-row" style="display:none;">
+          <span class="user-name" id="user-name"></span>
+          <button class="btn-link" id="logout-btn">Logout</button>
+        </div>
+        <div class="user-row" id="guest-row">
+          <span class="user-name">Guest</span>
+          <span class="guest-actions">
+            <button class="btn-link" id="signin-btn">Sign In</button>
+            <button class="btn-link" id="signup-btn">Sign Up</button>
+          </span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="main-area">
+      <!-- Simple Top Bar -->
+      <header class="top-bar">
+        <div class="top-bar-left">
+          <div class="model-select-wrapper">
+            <select id="header-model-select" class="clean-select">
+              <option value="qwen2.5:7b" selected>Qwen 2.5 (7B)</option>
+              <option value="soul-llm">SOUL-LLM (Scratch PyTorch)</option>
+              <option value="llama3.1:8b">Llama 3.1 (8B)</option>
+              <option value="mistral:7b">Mistral (7B)</option>
+              <option value="gemma2:9b">Gemma 2 (9B)</option>
+            </select>
+          </div>
+        </div>
+      </header>
+
+      <!-- 1. CHAT TAB -->
+      <section class="tab-view active" id="tab-chat">
+        <div class="chat-window">
+          <div class="chat-scroll" id="chat-history">
+            <!-- Welcome screen -->
+            <div class="welcome-screen" id="welcome-screen">
+              <h2>How can Soul AI help you today?</h2>
+              <p>Your private, offline personal AI companion powered directly by your NVIDIA GeForce RTX 4060 GPU.</p>
+
+              <div class="prompt-suggestions">
+                <div class="suggestion-chip" onclick="sendQuickPrompt('Check my system hardware and GPU statistics')">
+                  <span class="chip-title">System Telemetry</span>
+                  <span class="chip-sub">Check CPU, RAM, and RTX 4060 stats</span>
+                </div>
+                <div class="suggestion-chip" onclick="sendQuickPrompt('Calculate Math.sqrt(144) * 50 + 25')">
+                  <span class="chip-title">Offline Math</span>
+                  <span class="chip-sub">Evaluate calculations with tools</span>
+                </div>
+                <div class="suggestion-chip" onclick="sendQuickPrompt('Write a quick greeting script into workspace file hello.py')">
+                  <span class="chip-title">Workspace Files</span>
+                  <span class="chip-sub">Create, edit, and inspect local files</span>
+                </div>
+                <div class="suggestion-chip" onclick="sendQuickPrompt('What offline tools do you have access to?')">
+                  <span class="chip-title">Tool Suite</span>
+                  <span class="chip-sub">Explore what Soul AI can do for you</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Input Bar -->
+          <div class="chat-input-bar">
+            <div class="input-container">
+              <textarea id="user-input" placeholder="Message Soul AI..." rows="1"></textarea>
+              <button id="send-btn" title="Send message">↑</button>
+            </div>
+            <div class="input-note">
+              Soul AI runs 100% locally. Your conversations and files never leave your computer.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. RAG KNOWLEDGE BASE TAB -->
+      <section class="tab-view" id="tab-rag">
+        <div class="page-container">
+          <div class="page-header">
+            <h2>Knowledge Base</h2>
+            <p>Add notes, documents, or code snippets for Soul AI to reference offline.</p>
+          </div>
+
+          <div class="simple-card">
+            <h3>Add Document to Knowledge</h3>
+            <p>Paste text content below. Soul AI will index it with fast local BM25 ranking.</p>
+            <div style="display:flex; gap:10px; margin-top:12px;">
+              <input type="text" id="rag-file-name" placeholder="Document title (e.g. project_notes.md)" style="flex:1; background:var(--bg-input); border:1px solid var(--border-color); padding:8px 12px; border-radius:var(--radius-md); color:#fff; font-family:inherit;">
+              <button class="btn-primary-simple" id="rag-index-btn">Index Document</button>
+            </div>
+            <textarea id="rag-file-content" placeholder="Paste text or notes here..." style="width:100%; height:120px; background:var(--bg-input); border:1px solid var(--border-color); border-radius:var(--radius-md); color:#fff; margin-top:10px; padding:10px; font-family:var(--font-mono); font-size:12.5px; resize:vertical;"></textarea>
+          </div>
+
+          <div class="simple-card">
+            <h3>Indexed Documents (<span id="rag-doc-count">0</span>)</h3>
+            <table class="clean-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Length</th>
+                  <th>Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="rag-table-body">
+                <tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No documents yet. Add one above!</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. WORKSPACE FILES TAB -->
+      <section class="tab-view" id="tab-workspace">
+        <div class="page-container">
+          <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-end;">
+            <div>
+              <h2>Workspace Files</h2>
+              <p>Files created, inspected, or managed by Soul AI.</p>
+            </div>
+            <button class="btn-clean" id="refresh-workspace-btn">Refresh</button>
+          </div>
+
+          <div class="simple-card">
+            <table class="clean-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Size</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="workspace-file-list">
+                <tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Workspace is empty.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="file-viewer-card" class="simple-card" style="display:none; margin-top:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <h3 id="viewing-file-name">Viewing File</h3>
+              <button class="btn-clean" id="close-file-btn">Close</button>
+            </div>
+            <pre style="background:#101013; padding:12px; border-radius:var(--radius-md); overflow-x:auto; font-family:var(--font-mono); font-size:12px; border:1px solid var(--border-color);" id="file-viewer-content"></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. TOOLS TAB -->
+      <section class="tab-view" id="tab-tools">
+        <div class="page-container">
+          <div class="page-header">
+            <h2>Offline Tool Suite</h2>
+            <p>Soul AI automatically invokes these tools to solve tasks.</p>
+          </div>
+          <div id="tools-container" style="display:flex; flex-direction:column; gap:12px;">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. SETTINGS TAB -->
+      <section class="tab-view" id="tab-settings">
+        <div class="page-container">
+          <div class="page-header">
+            <h2>Settings & Models</h2>
+            <p>Configure Soul AI and manage local model weights.</p>
+          </div>
+
+          <div class="simple-card">
+            <h3>Download Local Models</h3>
+            <p>Click any model to pull into your offline storage for GPU acceleration:</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px;">
+              <button class="btn-clean" style="padding:12px; text-align:left;" onclick="pullModelDirect('qwen2.5:7b')">
+                <strong>Qwen 2.5 (7B)</strong>
+                <div style="font-size:11.5px; color:var(--text-muted);">Installed & Active ✔</div>
+              </button>
+              <button class="btn-clean" style="padding:12px; text-align:left;" onclick="pullModelDirect('llama3.1:8b')">
+                <strong>Llama 3.1 (8B)</strong>
+                <div style="font-size:11.5px; color:var(--text-muted);">Meta's open-weights model</div>
+              </button>
+              <button class="btn-clean" style="padding:12px; text-align:left;" onclick="pullModelDirect('mistral:7b')">
+                <strong>Mistral (7B)</strong>
+                <div style="font-size:11.5px; color:var(--text-muted);">Snappy instruction following</div>
+              </button>
+              <button class="btn-clean" style="padding:12px; text-align:left;" onclick="pullModelDirect('gemma2:9b')">
+                <strong>Gemma 2 (9B)</strong>
+                <div style="font-size:11.5px; color:var(--text-muted);">Google high-efficiency model</div>
+              </button>
+            </div>
+            <div id="pull-status-box" style="display:none; margin-top:12px; background:#101013; padding:10px; border-radius:var(--radius-md); font-family:var(--font-mono); font-size:12px; border:1px solid var(--border-color);"></div>
+          </div>
+
+          <div class="simple-card" id="trainer-card">
+            <h3>SOUL-LLM Distillation Trainer</h3>
+            <p style="font-size:12.5px; line-height:1.6;">
+              <strong>Qwen 2.5 7B (teacher)</strong> answers your messages → good answers are saved as training
+              examples → a background worker runs <strong>real PyTorch training</strong> on SOUL-LLM (the student).
+              SOUL-LLM keeps its own weights; it never calls Qwen during chat.
+            </p>
+
+            <div class="trainer-status-grid">
+              <div><span class="t-label">ACTIVE MODEL</span><span class="t-value" id="t-active-model">SOUL-LLM</span></div>
+              <div><span class="t-label">TRAINING STATUS</span><span class="t-value t-status" id="t-status">—</span></div>
+              <div><span class="t-label">DEVICE</span><span class="t-value" id="t-device">—</span></div>
+              <div><span class="t-label">CURRENT STEP</span><span class="t-value" id="t-step">—</span></div>
+              <div><span class="t-label">CURRENT LOSS</span><span class="t-value" id="t-loss">—</span></div>
+              <div><span class="t-label">DATASET / PENDING</span><span class="t-value" id="t-dataset">0 / 0</span></div>
+            </div>
+
+            <div class="trainer-buttons">
+              <button class="btn-clean" id="t-start">Start Training</button>
+              <button class="btn-clean" id="t-pause">Pause</button>
+              <button class="btn-clean" id="t-resume">Resume</button>
+              <button class="btn-clean" id="t-stop">Stop</button>
+              <button class="btn-clean" id="t-evaluate">Evaluate</button>
+              <button class="btn-clean" id="t-refresh">Refresh</button>
+            </div>
+
+            <div class="trainer-options">
+              <label class="t-opt">
+                Collect mode
+                <select id="t-collect-mode">
+                  <option value="auto">Automatic collection</option>
+                  <option value="after-n">Automatic + train after N</option>
+                  <option value="manual">Manual collection</option>
+                </select>
+              </label>
+              <label class="t-opt">
+                Train after N examples
+                <input type="number" id="t-train-after" min="1" value="5" style="width:70px;">
+              </label>
+              <button class="btn-clean" id="t-save-last">Save last reply</button>
+            </div>
+
+            <div class="trainer-checkpoints">
+              <div class="t-subhead">Checkpoints <span id="t-ckpt-count"></span></div>
+              <div id="t-checkpoint-list" class="t-ckpt-list"><span class="t-muted">No checkpoints yet.</span></div>
+            </div>
+
+            <div id="t-eval-box" style="display:none; margin-top:14px;">
+              <div class="t-subhead">Evaluation (loss + generated text)</div>
+              <div id="t-eval-content"></div>
+            </div>
+            <div id="t-log" style="display:none; margin-top:12px; background:#101013; padding:10px; border-radius:var(--radius-md); font-family:var(--font-mono); font-size:11.5px; border:1px solid var(--border-color); white-space:pre-wrap;"></div>
+          </div>
+
+          <div class="simple-card">
+            <h3>Custom Instructions</h3>
+            <p>Tell Soul AI how you would like it to behave:</p>
+            <textarea id="cfg-instructions" placeholder="e.g. You are a kind and patient coding companion. Keep answers clear and concise." style="width:100%; height:80px; background:var(--bg-input); border:1px solid var(--border-color); border-radius:var(--radius-md); color:#fff; padding:10px; font-family:inherit; font-size:13.5px; margin-top:10px;"></textarea>
+            <div style="margin-top:12px; text-align:right;">
+              <button class="btn-primary-simple" id="save-settings-btn">Save Instructions</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Auth Modal -->
+  <div class="auth-overlay" id="auth-overlay" style="display:none;">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <img id="auth-icon" class="auth-icon" src="favicon.svg" alt="Soul AI">
+      </div>
+      <h2 id="auth-title">Login to Soul AI</h2>
+      <p class="auth-sub" id="auth-sub">Your chats stay private on this computer.</p>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login-btn">Login</button>
+        <button class="auth-tab" id="tab-register-btn">Register</button>
+      </div>
+
+      <form id="auth-form" autocomplete="off">
+        <label class="auth-label" for="auth-username">Username</label>
+        <input class="auth-input" id="auth-username" type="text" placeholder="3-20 letters, numbers, _">
+        <label class="auth-label" for="auth-password">Password</label>
+        <input class="auth-input" id="auth-password" type="password" placeholder="At least 4 characters">
+        <div class="auth-error" id="auth-error"></div>
+        <button class="auth-submit" id="auth-submit" type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

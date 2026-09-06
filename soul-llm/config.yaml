@@ -1,0 +1,68 @@
+# =====================================================================
+# SOUL-LLM Configuration File
+# =====================================================================
+# This configuration file manages the student model architecture,
+# the temporary teacher model, and the knowledge distillation process.
+
+project_name: "SOUL-LLM"
+version: "1.2.0"
+
+# ---------------------------------------------------------------------
+# Student Model (SOUL-LLM) Architecture
+# ---------------------------------------------------------------------
+# A small decoder-only Transformer built from scratch in PyTorch.
+student:
+  d_model: 256            # Embedding dimension
+  n_layer: 4              # Number of Transformer blocks
+  n_head: 4               # Attention heads
+  ff_dim: 512             # Feed-forward hidden dimension
+  block_size: 128         # Maximum sequence length (context window)
+  dropout: 0.1            # Dropout probability
+  model_dir: "model/soul-llm"
+  checkpoint_path: "model/soul-llm/best_model.pt"
+
+# ---------------------------------------------------------------------
+# Temporary Teacher Model Configuration
+# ---------------------------------------------------------------------
+# NOTE: Qwen is used ONLY during data generation and distillation.
+# The final SOUL-LLM deployment DOES NOT require or load Qwen.
+teacher:
+  enabled: true
+  provider: "ollama"      # "ollama" or "api"
+  model: "qwen2.5:7b"     # Temporary teacher model name
+  endpoint: "http://localhost:11434"
+  temperature: 0.7
+  max_tokens: 150
+  timeout_seconds: 60
+
+# ---------------------------------------------------------------------
+# Knowledge Distillation & Training Hyperparameters
+# ---------------------------------------------------------------------
+distillation:
+  temperature: 2.0        # Softens output distribution during distillation
+  alpha: 0.6              # Weight between teacher loss and hard label loss
+  batch_size: 32          # Training batch size
+  learning_rate: 0.0003   # AdamW initial learning rate
+  weight_decay: 0.01      # Regularization
+  epochs: 25              # Number of training epochs
+  grad_clip: 1.0          # Gradient clipping norm threshold
+  eval_interval: 50       # Evaluation frequency (steps)
+
+# ---------------------------------------------------------------------
+# Data & Tokenizer Paths
+# ---------------------------------------------------------------------
+paths:
+  raw_data: "data/raw/sample.txt"
+  teacher_generated_dir: "data/teacher_generated"
+  teacher_data_file: "data/teacher_generated/distilled_data.txt"
+  vocab_file: "tokenizer/vocab.json"
+  checkpoints_dir: "model/soul-llm"
+
+# ---------------------------------------------------------------------
+# Generation Defaults for SOUL-LLM Inference
+# ---------------------------------------------------------------------
+inference:
+  max_new_tokens: 100
+  temperature: 0.8
+  top_k: 40
+  deterministic: false

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOUL-LLM</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="chat-app">
+    <header class="chat-header">
+      <div class="header-content">
+        <h1>SOUL-LLM</h1>
+        <span class="status" id="status">Ready</span>
+      </div>
+    </header>
+
+    <main class="chat-main" id="chat-main">
+      <div class="welcome" id="welcome">
+        <h2>SOUL-LLM</h2>
+        <p>A small educational language model built from scratch using PyTorch.</p>
+        <div class="chips">
+          <button class="chip" onclick="sendChip('The soul is')">The soul is...</button>
+          <button class="chip" onclick="sendChip('Language is')">Language is...</button>
+          <button class="chip" onclick="sendChip('A transformer')">A transformer...</button>
+        </div>
+      </div>
+      <div class="messages" id="messages"></div>
+    </main>
+
+    <footer class="chat-footer">
+      <div class="input-wrap">
+        <textarea id="input" placeholder="Message SOUL-LLM..." rows="1"></textarea>
+        <button id="send" title="Send">↑</button>
+      </div>
+      <p class="note">SOUL-LLM runs 100% locally. No data leaves your computer.</p>
+    </footer>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

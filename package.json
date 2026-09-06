@@ -1,0 +1,27 @@
+{
+  "name": "soul-ai",
+  "version": "1.0.0",
+  "description": "Soul AI — 100% Offline Personal AI Companion with Tools, RAG, and Clean UI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "cli": "node cli.js",
+    "test": "node test.js",
+    "trainer": "python soul-llm/training/background_worker.py",
+    "train": "python soul-llm/training/train.py",
+    "evaluate": "python soul-llm/evaluation/evaluate.py"
+  },
+  "keywords": [
+    "offline-ai",
+    "agent",
+    "ollama",
+    "rag",
+    "local-llm"
+  ],
+  "author": "Ankit",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}
