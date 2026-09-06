@@ -353,20 +353,24 @@ app.delete('/api/rag/file', (req, res) => {
 });
 
 // Start Server
-auth.ensureStorage();
-app.listen(PORT, () => {
-  console.log(`\n=================================================`);
-  console.log(`  🚀 OFFLINE AI AGENT SERVER RUNNING`);
-  console.log(`  URL: http://localhost:${PORT}`);
-  console.log(`  Workspace: ${WORKSPACE_DIR}`);
-  console.log(`=================================================\n`);
+if (require.main === module) {
+  auth.ensureStorage();
+  app.listen(PORT, () => {
+    console.log(`\n=================================================`);
+    console.log(`  🚀 OFFLINE AI AGENT SERVER RUNNING`);
+    console.log(`  URL: http://localhost:${PORT}`);
+    console.log(`  Workspace: ${WORKSPACE_DIR}`);
+    console.log(`=================================================\n`);
 
-  // Pre-load the model so the first chat request doesn't time out on VRAM load
-  defaultAgent.warmup().then(ok => {
-    if (ok) {
-      console.log(`  ✅ Model "${defaultAgent.model}" pre-loaded & kept warm (keep_alive 30m)`);
-    } else {
-      console.log(`  ℹ️  Model warmup skipped (Ollama offline or model unavailable)`);
-    }
-  }).catch(() => {});
-});
+    // Pre-load the model so the first chat request doesn't time out on VRAM load
+    defaultAgent.warmup().then(ok => {
+      if (ok) {
+        console.log(`  ✅ Model "${defaultAgent.model}" pre-loaded & kept warm (keep_alive 30m)`);
+      } else {
+        console.log(`  ℹ️  Model warmup skipped (Ollama offline or model unavailable)`);
+      }
+    }).catch(() => {});
+  });
+}
+
+module.exports = { app };

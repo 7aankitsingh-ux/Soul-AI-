@@ -3,27 +3,26 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
+// Serverless (Vercel) environments have a read-only filesystem. When running
+// there we degrade to an ephemeral in-memory store instead of crashing on
+// mkdir/write. Persistence is lost between requests — fine for a demo shell.
+const IS_SERVERLESS = !!process.env.VERCEL;
+
 const STORAGE_DIR = path.join(__dirname, 'storage');
 const USERS_FILE = path.join(STORAGE_DIR, 'users.json');
 const SESSIONS_FILE = path.join(STORAGE_DIR, 'sessions.json');
 const CHATS_DIR = path.join(STORAGE_DIR, 'chats');
 
 function ensureStorage() {
+  if (IS_SERVERLESS) return;
   fs.mkdirSync(STORAGE_DIR, { recursive: true });
   fs.mkdirSync(CHATS_DIR, { recursive: true });
   if (!fs.existsSync(USERS_FILE)) fs.writeFileSync(USERS_FILE, '{}', 'utf8');
   if (!fs.existsSync(SESSIONS_FILE)) fs.writeFileSync(SESSIONS_FILE, '{}', 'utf8');
 }
 
-function readJson(file, fallback) {
-  try {
-    return JSON.parse(fs.readFileSync(file, 'utf8'));
-  } catch {
-    return fallback;
-  }
-}
-
 function writeJson(file, data) {
+  if (IS_SERVERLESS) return;
   fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
 }
 

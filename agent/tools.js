@@ -4,19 +4,22 @@ const { exec, execSync } = require('child_process');
 const os = require('os');
 const { ragEngine } = require('./rag');
 
+// Serverless (Vercel) has a read-only filesystem — degrade gracefully.
+const IS_SERVERLESS = !!process.env.VERCEL;
+
 // Sandboxed workspace directory
 const WORKSPACE_DIR = path.resolve(__dirname, '..', 'workspace');
-if (!fs.existsSync(WORKSPACE_DIR)) {
+if (!IS_SERVERLESS && !fs.existsSync(WORKSPACE_DIR)) {
   fs.mkdirSync(WORKSPACE_DIR, { recursive: true });
 }
 
 // Memory file
 const MEMORY_FILE = path.resolve(__dirname, '..', 'storage', 'memory.json');
 const STORAGE_DIR = path.resolve(__dirname, '..', 'storage');
-if (!fs.existsSync(STORAGE_DIR)) {
+if (!IS_SERVERLESS && !fs.existsSync(STORAGE_DIR)) {
   fs.mkdirSync(STORAGE_DIR, { recursive: true });
 }
-if (!fs.existsSync(MEMORY_FILE)) {
+if (!IS_SERVERLESS && !fs.existsSync(MEMORY_FILE)) {
   fs.writeFileSync(MEMORY_FILE, JSON.stringify({}, null, 2));
 }
 

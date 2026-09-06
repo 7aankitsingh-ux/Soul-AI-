@@ -1,10 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 
+const IS_SERVERLESS = !!process.env.VERCEL;
 const KNOWLEDGE_DIR = path.resolve(__dirname, '..', 'storage', 'knowledge');
 const INDEX_FILE = path.resolve(__dirname, '..', 'storage', 'rag_index.json');
 
-if (!fs.existsSync(KNOWLEDGE_DIR)) {
+if (!IS_SERVERLESS && !fs.existsSync(KNOWLEDGE_DIR)) {
   fs.mkdirSync(KNOWLEDGE_DIR, { recursive: true });
 }
 
